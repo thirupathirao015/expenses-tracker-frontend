@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { expenseService } from '../services/expenseService';
 import { authService } from '../services/authService';
 
 const Dashboard = () => {
-  const location = useLocation();
   const [remainingData, setRemainingData] = useState(null);
   const [todayExpenses, setTodayExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,21 +38,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-    
-    // Check if we have an expense to edit from navigation state
-    if (location.state?.editExpense) {
-      const expense = location.state.editExpense;
-      setEditingExpense(expense);
-      setExpenseForm({
-        amount: expense.amount.toString(),
-        category: expense.category,
-        description: expense.description || '',
-        expenseDate: expense.expenseDate,
-      });
-      // Clear the navigation state
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
+  }, []);
 
   const fetchDashboardData = async () => {
     try {

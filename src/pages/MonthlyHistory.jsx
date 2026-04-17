@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { expenseService } from '../services/expenseService';
 
 const MonthlyHistory = () => {
-  const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [report, setReport] = useState(null);
@@ -11,6 +9,22 @@ const MonthlyHistory = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [downloading, setDownloading] = useState(false);
+  
+  // Edit modal state
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [editForm, setEditForm] = useState({
+    amount: '',
+    category: 'FOOD',
+    description: '',
+    expenseDate: '',
+  });
+  const [saving, setSaving] = useState(false);
+  
+  const categories = [
+    'ROOM_RENT', 'FOOD', 'CLOTHES', 'MOVIES', 'TRANSPORTATION',
+    'UTILITIES', 'HEALTHCARE', 'EDUCATION', 'ENTERTAINMENT',
+    'SHOPPING', 'TRAVEL', 'OTHER',
+  ];
 
   const months = [
     { value: 1, label: 'January' },
@@ -62,8 +76,45 @@ const MonthlyHistory = () => {
   };
 
   const handleEdit = (expense) => {
-    // Navigate to dashboard with expense data for editing
-    navigate('/dashboard', { state: { editExpense: expense } });
+    setEditingExpense(expense);
+    setEditForm({
+      amount: expense.amount.toString(),
+      category: expense.category,
+      description: expense.description || '',
+      expenseDate: expense.expenseDate,
+    });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({
+      ...editForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError('');
+    
+    try {
+      const data = {
+        ...editForm,
+        amount: parseFloat(editForm.amount),
+      };
+      await expenseService.updateExpense(editingExpense.id, data);
+      setSuccess('Expense updated successfully!');
+      setEditingExpense(null);
+      fetchReport();
+    } catch (err) {
+      setError('Failed to update expense');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingExpense(null);
   };
 
   const handleDownloadPdf = async () => {
@@ -219,6 +270,114 @@ const MonthlyHistory = () => {
           </div>
         </>
       ) : null}
+
+      {/* Edit Modal */}
+      {editingExpense && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            width: '90%',
+            maxWidth: '500px',
+            maxHeight: '90vh',
+            overflow: 'auto',
+          }}>
+            <h2 style={{ marginBottom: '20px' }}>Edit Expense</h2>
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label htmlFor="edit-amount">Amount (Rs)</label>
+                <input
+                  type="number"
+                  id="edit-amount"
+                  name="amount"
+                  className="form-control"
+                  value={editForm.amount}
+                  onChange={handleEditChange}
+                  required
+                  min="0.01"
+                  step="0.01"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-category">Category</label>
+                <select
+                  id="edit-category"
+                  name="category"
+                  className="form-control"
+                  value={editForm.category}
+                  onChange={handleEditChange}
+                  required
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat.replace('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-description">Description</label>
+                <input
+                  type="text"
+                  id="edit-description"
+                  name="description"
+                  className="form-control"
+                  value={editForm.description}
+                  onChange={handleEditChange}
+                  placeholder="Optional description"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="edit-expenseDate">Date</label>
+                <input
+                  type="date"
+                  id="edit-expenseDate"
+                  name="expenseDate"
+                  className="form-control"
+                  value={editForm.expenseDate}
+                  onChange={handleEditChange}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                  disabled={saving}
+                >
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ flex: 1 }}
+                  onClick={handleCancelEdit}
+                  disabled={saving}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
