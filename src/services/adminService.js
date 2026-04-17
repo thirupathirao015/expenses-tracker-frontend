@@ -25,6 +25,13 @@ export const adminService = {
     return response.data;
   },
 
+  deleteUserAllExpenses: async (adminKey, userId) => {
+    const response = await axios.delete(
+      `${API_URL}/admin/users/${userId}/all-expenses?adminKey=${adminKey}`
+    );
+    return response.data;
+  },
+
   deleteUser: async (adminKey, userId) => {
     const response = await axios.delete(`${API_URL}/admin/users/${userId}?adminKey=${adminKey}`);
     return response.data;

@@ -14,6 +14,7 @@ const AdminDashboard = () => {
   // Delete modal states
   const [deletingUser, setDeletingUser] = useState(null);
   const [deletingMonth, setDeletingMonth] = useState(null);
+  const [deletingAllMonths, setDeletingAllMonths] = useState(null);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [deleting, setDeleting] = useState(false);
@@ -98,6 +99,22 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteAllMonths = async () => {
+    if (!deletingAllMonths) return;
+    
+    setDeleting(true);
+    try {
+      await adminService.deleteUserAllExpenses(adminKey, deletingAllMonths.id);
+      setSuccess(`All expenses for ${deletingAllMonths.email} deleted successfully`);
+      setDeletingAllMonths(null);
+      fetchUsers(adminKey);
+    } catch (err) {
+      setError('Failed to delete all expenses');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -153,6 +170,13 @@ const AdminDashboard = () => {
                       onClick={() => setDeletingMonth(user)}
                     >
                       Delete Month
+                    </button>
+                    <button
+                      className="btn btn-warning"
+                      style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                      onClick={() => setDeletingAllMonths(user)}
+                    >
+                      Delete All Months
                     </button>
                     <button
                       className="btn btn-danger"
@@ -261,6 +285,46 @@ const AdminDashboard = () => {
                 className="btn btn-secondary"
                 style={{ flex: 1 }}
                 onClick={() => setDeletingMonth(null)}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete All Months Confirmation Modal */}
+      {deletingAllMonths && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+          justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'white', padding: '30px', borderRadius: '8px',
+            width: '90%', maxWidth: '400px', textAlign: 'center',
+          }}>
+            <h3 style={{ color: '#ff9800', marginBottom: '15px' }}>⚠️ Delete All Expenses</h3>
+            <p style={{ marginBottom: '20px' }}>
+              Are you sure you want to delete <strong>ALL</strong> expenses for <strong>{deletingAllMonths.name}</strong>?
+            </p>
+            <p style={{ color: '#ff9800', fontSize: '14px', marginBottom: '20px' }}>
+              This will delete all expense data across all months for this user. This cannot be undone!
+            </p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                className="btn btn-warning"
+                style={{ flex: 1, backgroundColor: '#ff9800', borderColor: '#ff9800' }}
+                onClick={handleDeleteAllMonths}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Yes, Delete All'}
+              </button>
+              <button
+                className="btn btn-secondary"
+                style={{ flex: 1 }}
+                onClick={() => setDeletingAllMonths(null)}
                 disabled={deleting}
               >
                 Cancel
