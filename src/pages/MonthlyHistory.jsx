@@ -158,38 +158,6 @@ const MonthlyHistory = () => {
             </div>
           </div>
 
-          {/* Category Breakdown */}
-          {Object.keys(report.categoryBreakdown).length > 0 && (
-            <div className="card" style={{ marginBottom: '20px' }}>
-              <h2 style={{ marginBottom: '20px' }}>Category Breakdown</h2>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>Amount</th>
-                    <th>Percentage</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(report.categoryBreakdown)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([category, amount]) => (
-                      <tr key={category}>
-                        <td>{category.replace(/_/g, ' ')}</td>
-                        <td>{formatCurrency(amount)}</td>
-                        <td>
-                          {report.totalSpent > 0
-                            ? ((amount / report.totalSpent) * 100).toFixed(1)
-                            : 0}
-                          %
-                        </td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
           {/* Expense Details */}
           <div className="card">
             <h2 style={{ marginBottom: '20px' }}>Expense Details</h2>
@@ -226,6 +194,11 @@ const MonthlyHistory = () => {
                       </td>
                     </tr>
                   ))}
+                  <tr style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
+                    <td colSpan="3" style={{ textAlign: 'right' }}>Total:</td>
+                    <td>{formatCurrency(report.totalSpent)}</td>
+                    <td></td>
+                  </tr>
                 </tbody>
               </table>
             )}
