@@ -49,6 +49,25 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  // Auto-clear success and error messages after 3 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
