@@ -17,6 +17,7 @@ const Dashboard = () => {
   });
   
   const [submitting, setSubmitting] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const user = authService.getCurrentUser();
 
@@ -73,8 +74,16 @@ const Dashboard = () => {
         ...expenseForm,
         amount: parseFloat(expenseForm.amount),
       };
-      await expenseService.addExpense(data);
-      setSuccess('Expense added successfully!');
+      
+      if (editingExpense) {
+        await expenseService.updateExpense(editingExpense.id, data);
+        setSuccess('Expense updated successfully!');
+        setEditingExpense(null);
+      } else {
+        await expenseService.addExpense(data);
+        setSuccess('Expense added successfully!');
+      }
+      
       setExpenseForm({
         amount: '',
         category: 'FOOD',
@@ -83,10 +92,44 @@ const Dashboard = () => {
       });
       fetchDashboardData();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add expense');
+      setError(err.response?.data?.message || 'Failed to save expense');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleEdit = (expense) => {
+    setEditingExpense(expense);
+    setExpenseForm({
+      amount: expense.amount.toString(),
+      category: expense.category,
+      description: expense.description || '',
+      expenseDate: expense.expenseDate,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this expense?')) {
+      return;
+    }
+    
+    try {
+      await expenseService.deleteExpense(id);
+      setSuccess('Expense deleted successfully!');
+      fetchDashboardData();
+    } catch (err) {
+      setError('Failed to delete expense');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingExpense(null);
+    setExpenseForm({
+      amount: '',
+      category: 'FOOD',
+      description: '',
+      expenseDate: new Date().toISOString().split('T')[0],
+    });
   };
 
   const formatCurrency = (amount) => {
@@ -126,9 +169,9 @@ const Dashboard = () => {
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        {/* Add Expense Form */}
+        {/* Add/Edit Expense Form */}
         <div className="card">
-          <h2 style={{ marginBottom: '20px' }}>Add Expense</h2>
+          <h2 style={{ marginBottom: '20px' }}>{editingExpense ? 'Edit Expense' : 'Add Expense'}</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="amount">Amount (Rs)</label>
@@ -195,8 +238,19 @@ const Dashboard = () => {
               style={{ width: '100%' }}
               disabled={submitting}
             >
-              {submitting ? 'Adding...' : 'Add Expense'}
+              {submitting ? (editingExpense ? 'Updating...' : 'Adding...') : (editingExpense ? 'Update Expense' : 'Add Expense')}
             </button>
+            
+            {editingExpense && (
+              <button
+                type="button"
+                className="btn btn-secondary"
+                style={{ width: '100%', marginTop: '10px' }}
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </button>
+            )}
           </form>
         </div>
 
@@ -212,6 +266,7 @@ const Dashboard = () => {
                   <th>Category</th>
                   <th>Description</th>
                   <th>Amount</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,6 +275,22 @@ const Dashboard = () => {
                     <td>{expense.category.replace('_', ' ')}</td>
                     <td>{expense.description || '-'}</td>
                     <td>{formatCurrency(expense.amount)}</td>
+                    <td>
+                      <button
+                        className="btn btn-primary"
+                        style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                        onClick={() => handleEdit(expense)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        style={{ padding: '4px 8px', fontSize: '12px' }}
+                        onClick={() => handleDelete(expense.id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

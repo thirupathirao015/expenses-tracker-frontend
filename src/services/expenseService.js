@@ -43,4 +43,13 @@ export const expenseService = {
     link.remove();
     window.URL.revokeObjectURL(url);
   },
+
+  updateExpense: async (id, expenseData) => {
+    const response = await api.put(`/expenses/${id}`, expenseData);
+    return response.data;
+  },
+
+  deleteExpense: async (id) => {
+    await api.delete(`/expenses/${id}`);
+  },
 };
