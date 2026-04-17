@@ -165,25 +165,60 @@ const AdminDashboard = () => {
                   <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                   <td>
                     <button
-                      className="btn btn-primary"
-                      style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                      style={{ 
+                        padding: '6px 12px', 
+                        fontSize: '12px', 
+                        marginRight: '8px',
+                        fontWeight: '600',
+                        backgroundColor: '#e3f2fd',
+                        color: '#1976d2',
+                        border: '1px solid #1976d2',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
                       onClick={() => setDeletingMonth(user)}
+                      onMouseOver={(e) => { e.target.style.backgroundColor = '#1976d2'; e.target.style.color = '#fff'; }}
+                      onMouseOut={(e) => { e.target.style.backgroundColor = '#e3f2fd'; e.target.style.color = '#1976d2'; }}
                     >
-                      Delete Month
+                      📅 Delete Month
                     </button>
                     <button
-                      className="btn btn-warning"
-                      style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                      style={{ 
+                        padding: '6px 12px', 
+                        fontSize: '12px', 
+                        marginRight: '8px',
+                        fontWeight: '600',
+                        backgroundColor: '#fff3e0',
+                        color: '#f57c00',
+                        border: '1px solid #f57c00',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
                       onClick={() => setDeletingAllMonths(user)}
+                      onMouseOver={(e) => { e.target.style.backgroundColor = '#f57c00'; e.target.style.color = '#fff'; }}
+                      onMouseOut={(e) => { e.target.style.backgroundColor = '#fff3e0'; e.target.style.color = '#f57c00'; }}
                     >
-                      Delete All Months
+                      📊 Delete All Months
                     </button>
                     <button
-                      className="btn btn-danger"
-                      style={{ padding: '4px 8px', fontSize: '12px' }}
+                      style={{ 
+                        padding: '6px 12px', 
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        backgroundColor: '#ffebee',
+                        color: '#d32f2f',
+                        border: '1px solid #d32f2f',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
                       onClick={() => setDeletingUser(user)}
+                      onMouseOver={(e) => { e.target.style.backgroundColor = '#d32f2f'; e.target.style.color = '#fff'; }}
+                      onMouseOut={(e) => { e.target.style.backgroundColor = '#ffebee'; e.target.style.color = '#d32f2f'; }}
                     >
-                      Delete User
+                      🗑️ Delete User
                     </button>
                   </td>
                 </tr>
