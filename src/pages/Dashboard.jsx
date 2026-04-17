@@ -22,6 +22,7 @@ const Dashboard = () => {
   // Salary edit state
   const [editingSalary, setEditingSalary] = useState(false);
   const [newSalary, setNewSalary] = useState('');
+  const [salaryReason, setSalaryReason] = useState('');
   const [updatingSalary, setUpdatingSalary] = useState(false);
 
   const user = authService.getCurrentUser();
@@ -146,9 +147,11 @@ const Dashboard = () => {
     setError('');
     
     try {
-      await expenseService.updateSalary(parseFloat(newSalary));
+      await expenseService.updateSalary(parseFloat(newSalary), salaryReason);
       setSuccess('Salary updated successfully!');
       setEditingSalary(false);
+      setNewSalary('');
+      setSalaryReason('');
       fetchDashboardData();
     } catch (err) {
       setError('Failed to update salary');
@@ -160,6 +163,7 @@ const Dashboard = () => {
   const handleCancelSalaryEdit = () => {
     setEditingSalary(false);
     setNewSalary('');
+    setSalaryReason('');
   };
 
   const formatCurrency = (amount) => {
@@ -404,6 +408,21 @@ const Dashboard = () => {
                   step="0.01"
                   placeholder="Enter new salary"
                 />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="salary-reason">Reason (Optional)</label>
+                <input
+                  type="text"
+                  id="salary-reason"
+                  className="form-control"
+                  value={salaryReason}
+                  onChange={(e) => setSalaryReason(e.target.value)}
+                  placeholder="e.g., Bonus, Increment, Salary change"
+                />
+                <small style={{ color: '#666', fontSize: '12px' }}>
+                  Add a note to remember why you updated the salary
+                </small>
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button
