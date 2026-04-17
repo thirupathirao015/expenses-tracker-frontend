@@ -20,6 +20,10 @@ const MonthlyHistory = () => {
   });
   const [saving, setSaving] = useState(false);
   
+  // Delete confirmation state
+  const [deletingExpense, setDeletingExpense] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  
   const categories = [
     'ROOM_RENT', 'FOOD', 'CLOTHES', 'MOVIES', 'TRANSPORTATION',
     'UTILITIES', 'HEALTHCARE', 'EDUCATION', 'ENTERTAINMENT',
@@ -61,18 +65,28 @@ const MonthlyHistory = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this expense?')) {
-      return;
-    }
+  const handleDeleteClick = (expense) => {
+    setDeletingExpense(expense);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingExpense) return;
     
+    setDeleting(true);
     try {
-      await expenseService.deleteExpense(id);
+      await expenseService.deleteExpense(deletingExpense.id);
       setSuccess('Expense deleted successfully!');
+      setDeletingExpense(null);
       fetchReport();
     } catch (err) {
       setError('Failed to delete expense');
+    } finally {
+      setDeleting(false);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeletingExpense(null);
   };
 
   const handleEdit = (expense) => {
@@ -252,7 +266,7 @@ const MonthlyHistory = () => {
                         <button
                           className="btn btn-danger"
                           style={{ padding: '4px 8px', fontSize: '12px' }}
-                          onClick={() => handleDelete(expense.id)}
+                          onClick={() => handleDeleteClick(expense)}
                         >
                           Delete
                         </button>
@@ -375,6 +389,66 @@ const MonthlyHistory = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingExpense && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            width: '90%',
+            maxWidth: '400px',
+            textAlign: 'center',
+          }}>
+            <h3 style={{ marginBottom: '15px', color: '#dc3545' }}>Confirm Delete</h3>
+            <p style={{ marginBottom: '20px', fontSize: '16px' }}>
+              Are you sure you want to delete this expense?
+            </p>
+            <div style={{
+              background: '#f8f9fa',
+              padding: '15px',
+              borderRadius: '4px',
+              marginBottom: '20px',
+              textAlign: 'left',
+            }}>
+              <p><strong>Category:</strong> {deletingExpense.category.replace(/_/g, ' ')}</p>
+              <p><strong>Description:</strong> {deletingExpense.description || '-'}</p>
+              <p><strong>Amount:</strong> {formatCurrency(deletingExpense.amount)}</p>
+              <p><strong>Date:</strong> {new Date(deletingExpense.expenseDate).toLocaleDateString()}</p>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                className="btn btn-danger"
+                style={{ flex: 1 }}
+                onClick={handleDeleteConfirm}
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Yes, Delete'}
+              </button>
+              <button
+                className="btn btn-secondary"
+                style={{ flex: 1 }}
+                onClick={handleDeleteCancel}
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
