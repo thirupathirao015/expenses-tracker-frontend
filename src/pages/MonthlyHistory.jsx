@@ -261,7 +261,6 @@ const MonthlyHistory = () => {
                 <thead>
                   <tr>
                     <th>Date</th>
-                    <th>Category</th>
                     <th>Description</th>
                     <th>Amount</th>
                     <th>Actions</th>
@@ -271,7 +270,6 @@ const MonthlyHistory = () => {
                   {report.expenses.map((expense) => (
                     <tr key={expense.id}>
                       <td>{new Date(expense.expenseDate).toLocaleDateString()}</td>
-                      <td>{expense.category.replace(/_/g, ' ')}</td>
                       <td>{expense.description || '-'}</td>
                       <td>{formatCurrency(expense.amount)}</td>
                       <td>
@@ -293,7 +291,7 @@ const MonthlyHistory = () => {
                     </tr>
                   ))}
                   <tr style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
-                    <td colSpan="3" style={{ textAlign: 'right' }}>Total:</td>
+                    <td colSpan="2" style={{ textAlign: 'right' }}>Total:</td>
                     <td>{formatCurrency(report.totalSpent)}</td>
                     <td></td>
                   </tr>
