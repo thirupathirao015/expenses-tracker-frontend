@@ -18,8 +18,16 @@ const Dashboard = () => {
   
   const [submitting, setSubmitting] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
+  
+  // Salary edit state
+  const [editingSalary, setEditingSalary] = useState(false);
+  const [newSalary, setNewSalary] = useState('');
+  const [updatingSalary, setUpdatingSalary] = useState(false);
 
   const user = authService.getCurrentUser();
+  
+  // Get current month name
+  const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   const categories = [
     'ROOM_RENT',
@@ -132,6 +140,28 @@ const Dashboard = () => {
     });
   };
 
+  const handleUpdateSalary = async (e) => {
+    e.preventDefault();
+    setUpdatingSalary(true);
+    setError('');
+    
+    try {
+      await expenseService.updateSalary(parseFloat(newSalary));
+      setSuccess('Salary updated successfully!');
+      setEditingSalary(false);
+      fetchDashboardData();
+    } catch (err) {
+      setError('Failed to update salary');
+    } finally {
+      setUpdatingSalary(false);
+    }
+  };
+
+  const handleCancelSalaryEdit = () => {
+    setEditingSalary(false);
+    setNewSalary('');
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -151,11 +181,45 @@ const Dashboard = () => {
       {success && <div className="alert alert-success">{success}</div>}
 
       {/* Summary Cards */}
+      {/* Current Month Display */}
+      <div style={{ 
+        background: '#e3f2fd', 
+        padding: '10px 20px', 
+        borderRadius: '8px', 
+        marginBottom: '20px',
+        textAlign: 'center',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        color: '#1976d2'
+      }}>
+        📅 Adding expenses for: {currentMonth}
+      </div>
+
       {remainingData && (
         <div className="summary-cards">
-          <div className="summary-card salary">
+          <div className="summary-card salary" style={{ position: 'relative' }}>
             <h3>Original Salary</h3>
             <div className="amount">{formatCurrency(remainingData.originalSalary)}</div>
+            <button
+              onClick={() => {
+                setEditingSalary(true);
+                setNewSalary(remainingData.originalSalary.toString());
+              }}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                padding: '4px 8px',
+                fontSize: '12px',
+                background: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Edit
+            </button>
           </div>
           <div className="summary-card expenses">
             <h3>Total Expenses</h3>
@@ -303,6 +367,67 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+
+      {/* Salary Edit Modal */}
+      {editingSalary && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'white',
+            padding: '30px',
+            borderRadius: '8px',
+            width: '90%',
+            maxWidth: '400px',
+          }}>
+            <h2 style={{ marginBottom: '20px' }}>Update Salary</h2>
+            <form onSubmit={handleUpdateSalary}>
+              <div className="form-group">
+                <label htmlFor="new-salary">New Salary Amount (Rs)</label>
+                <input
+                  type="number"
+                  id="new-salary"
+                  className="form-control"
+                  value={newSalary}
+                  onChange={(e) => setNewSalary(e.target.value)}
+                  required
+                  min="0"
+                  step="0.01"
+                  placeholder="Enter new salary"
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ flex: 1 }}
+                  disabled={updatingSalary}
+                >
+                  {updatingSalary ? 'Updating...' : 'Update Salary'}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ flex: 1 }}
+                  onClick={handleCancelSalaryEdit}
+                  disabled={updatingSalary}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

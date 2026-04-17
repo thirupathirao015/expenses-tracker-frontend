@@ -52,4 +52,9 @@ export const expenseService = {
   deleteExpense: async (id) => {
     await api.delete(`/expenses/${id}`);
   },
+
+  updateSalary: async (newSalary) => {
+    const response = await api.put(`/auth/update-salary?newSalary=${newSalary}`);
+    return response.data;
+  },
 };
