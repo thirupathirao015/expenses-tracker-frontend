@@ -7,6 +7,7 @@ const MonthlyHistory = () => {
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [downloading, setDownloading] = useState(false);
 
   const months = [
@@ -34,12 +35,27 @@ const MonthlyHistory = () => {
     try {
       setLoading(true);
       setError('');
+      setSuccess('');
       const data = await expenseService.getMonthlyReport(selectedYear, selectedMonth);
       setReport(data);
     } catch (err) {
       setError('Failed to load monthly report');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this expense?')) {
+      return;
+    }
+    
+    try {
+      await expenseService.deleteExpense(id);
+      setSuccess('Expense deleted successfully!');
+      fetchReport();
+    } catch (err) {
+      setError('Failed to delete expense');
     }
   };
 
@@ -66,6 +82,7 @@ const MonthlyHistory = () => {
       <h1 style={{ marginBottom: '20px' }}>Monthly History</h1>
 
       {error && <div className="alert alert-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
 
       {/* Month/Year Selector */}
       <div className="card" style={{ marginBottom: '20px' }}>
@@ -188,6 +205,7 @@ const MonthlyHistory = () => {
                     <th>Category</th>
                     <th>Description</th>
                     <th>Amount</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,6 +215,15 @@ const MonthlyHistory = () => {
                       <td>{expense.category.replace(/_/g, ' ')}</td>
                       <td>{expense.description || '-'}</td>
                       <td>{formatCurrency(expense.amount)}</td>
+                      <td>
+                        <button
+                          className="btn btn-danger"
+                          style={{ padding: '4px 8px', fontSize: '12px' }}
+                          onClick={() => handleDelete(expense.id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
