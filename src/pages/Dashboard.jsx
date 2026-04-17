@@ -345,7 +345,45 @@ const Dashboard = () => {
         <div className="card">
           <h2 style={{ marginBottom: '20px' }}>Today's Expenses</h2>
           {todayExpenses.length === 0 ? (
-            <p style={{ color: '#666', textAlign: 'center' }}>No expenses today</p>
+            <div style={{ 
+              textAlign: 'center', 
+              padding: '40px 20px',
+              color: '#666'
+            }}>
+              <div style={{ 
+                fontSize: '48px', 
+                marginBottom: '15px',
+                opacity: '0.5'
+              }}>
+                📝
+              </div>
+              <h3 style={{ 
+                marginBottom: '10px', 
+                color: '#333',
+                fontSize: '18px'
+              }}>
+                No expenses added today
+              </h3>
+              <p style={{ 
+                marginBottom: '20px',
+                fontSize: '14px',
+                lineHeight: '1.5'
+              }}>
+                Start tracking your expenses by adding your first entry!<br />
+                <small style={{ color: '#999' }}>
+                  💡 Tip: Add expenses regularly to better manage your budget
+                </small>
+              </p>
+              <div style={{
+                background: '#e3f2fd',
+                padding: '15px',
+                borderRadius: '8px',
+                fontSize: '13px',
+                color: '#1976d2'
+              }}>
+                <strong>Need help?</strong> Contact <em>Thirupathi</em> for assistance
+              </div>
+            </div>
           ) : (
             <table className="table">
               <thead>
