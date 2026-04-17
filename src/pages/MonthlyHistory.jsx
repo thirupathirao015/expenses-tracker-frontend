@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { expenseService } from '../services/expenseService';
 
 const MonthlyHistory = () => {
+  const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [report, setReport] = useState(null);
@@ -57,6 +59,11 @@ const MonthlyHistory = () => {
     } catch (err) {
       setError('Failed to delete expense');
     }
+  };
+
+  const handleEdit = (expense) => {
+    // Navigate to dashboard with expense data for editing
+    navigate('/dashboard', { state: { editExpense: expense } });
   };
 
   const handleDownloadPdf = async () => {
@@ -184,6 +191,13 @@ const MonthlyHistory = () => {
                       <td>{expense.description || '-'}</td>
                       <td>{formatCurrency(expense.amount)}</td>
                       <td>
+                        <button
+                          className="btn btn-primary"
+                          style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                          onClick={() => handleEdit(expense)}
+                        >
+                          Edit
+                        </button>
                         <button
                           className="btn btn-danger"
                           style={{ padding: '4px 8px', fontSize: '12px' }}
