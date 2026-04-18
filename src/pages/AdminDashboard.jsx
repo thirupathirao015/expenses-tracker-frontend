@@ -162,9 +162,20 @@ const AdminDashboard = () => {
 
   return (
     <div className="container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1>👨‍💼 Admin Dashboard</h1>
-        <button className="btn btn-secondary" onClick={handleLogout}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: '20px',
+        flexWrap: 'wrap',
+        gap: '10px'
+      }}>
+        <h1 style={{ margin: 0, fontSize: 'clamp(20px, 5vw, 28px)' }}>👨‍💼 Admin Dashboard</h1>
+        <button 
+          className="btn btn-secondary" 
+          onClick={handleLogout}
+          style={{ whiteSpace: 'nowrap' }}
+        >
           Logout
         </button>
       </div>
@@ -178,86 +189,191 @@ const AdminDashboard = () => {
         {users.length === 0 ? (
           <p>No users registered yet</p>
         ) : (
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Salary</th>
-                <th>Expenses</th>
-                <th>Registered</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            {/* Desktop Table View */}
+            <div style={{ display: 'none' }} className="desktop-table">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Salary</th>
+                    <th>Expenses</th>
+                    <th>Registered</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{formatCurrency(user.salary)}</td>
+                      <td>{expenseCounts[user.id] || 0}</td>
+                      <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td>
+                        <button
+                          style={{ 
+                            padding: '6px 12px', 
+                            fontSize: '12px', 
+                            marginRight: '8px',
+                            fontWeight: '600',
+                            backgroundColor: '#e3f2fd',
+                            color: '#1976d2',
+                            border: '1px solid #1976d2',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          onClick={() => setDeletingMonth(user)}
+                          onMouseOver={(e) => { e.target.style.backgroundColor = '#1976d2'; e.target.style.color = '#fff'; }}
+                          onMouseOut={(e) => { e.target.style.backgroundColor = '#e3f2fd'; e.target.style.color = '#1976d2'; }}
+                        >
+                          📅 Delete Month
+                        </button>
+                        <button
+                          style={{ 
+                            padding: '6px 12px', 
+                            fontSize: '12px', 
+                            marginRight: '8px',
+                            fontWeight: '600',
+                            backgroundColor: '#fff3e0',
+                            color: '#f57c00',
+                            border: '1px solid #f57c00',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          onClick={() => setDeletingAllMonths(user)}
+                          onMouseOver={(e) => { e.target.style.backgroundColor = '#f57c00'; e.target.style.color = '#fff'; }}
+                          onMouseOut={(e) => { e.target.style.backgroundColor = '#fff3e0'; e.target.style.color = '#f57c00'; }}
+                        >
+                          📊 Delete All Months
+                        </button>
+                        <button
+                          style={{ 
+                            padding: '6px 12px', 
+                            fontSize: '12px', 
+                            marginRight: '8px',
+                            fontWeight: '600',
+                            backgroundColor: '#e8f5e9',
+                            color: '#388e3c',
+                            border: '1px solid #388e3c',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          onClick={() => setResettingPassword(user)}
+                          onMouseOver={(e) => { e.target.style.backgroundColor = '#388e3c'; e.target.style.color = '#fff'; }}
+                          onMouseOut={(e) => { e.target.style.backgroundColor = '#e8f5e9'; e.target.style.color = '#388e3c'; }}
+                        >
+                          🔑 Reset Password
+                        </button>
+                        <button
+                          style={{ 
+                            padding: '6px 12px', 
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            backgroundColor: '#ffebee',
+                            color: '#d32f2f',
+                            border: '1px solid #d32f2f',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                          onClick={() => setDeletingUser(user)}
+                          onMouseOver={(e) => { e.target.style.backgroundColor = '#d32f2f'; e.target.style.color = '#fff'; }}
+                          onMouseOut={(e) => { e.target.style.backgroundColor = '#ffebee'; e.target.style.color = '#d32f2f'; }}
+                        >
+                          🗑️ Delete User
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="mobile-cards">
               {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  <td>{user.email}</td>
-                  <td>{formatCurrency(user.salary)}</td>
-                  <td>{expenseCounts[user.id] || 0}</td>
-                  <td>{new Date(user.createdAt).toLocaleDateString()}</td>
-                  <td>
+                <div key={user.id} style={{
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  padding: '15px',
+                  marginBottom: '15px',
+                  backgroundColor: '#fafafa'
+                }}>
+                  <div style={{ marginBottom: '10px' }}>
+                    <strong style={{ fontSize: '16px', color: '#333' }}>{user.name}</strong>
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>
+                    📧 {user.email}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>
+                    💰 Salary: {formatCurrency(user.salary)}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>
+                    📝 Expenses: {expenseCounts[user.id] || 0}
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#666', marginBottom: '15px' }}>
+                    📅 Registered: {new Date(user.createdAt).toLocaleDateString()}
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                     <button
                       style={{ 
-                        padding: '6px 12px', 
-                        fontSize: '12px', 
-                        marginRight: '8px',
+                        padding: '8px 12px', 
+                        fontSize: '12px',
                         fontWeight: '600',
                         backgroundColor: '#e3f2fd',
                         color: '#1976d2',
                         border: '1px solid #1976d2',
                         borderRadius: '4px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s'
+                        flex: '1 1 calc(50% - 4px)',
+                        minWidth: '120px'
                       }}
                       onClick={() => setDeletingMonth(user)}
-                      onMouseOver={(e) => { e.target.style.backgroundColor = '#1976d2'; e.target.style.color = '#fff'; }}
-                      onMouseOut={(e) => { e.target.style.backgroundColor = '#e3f2fd'; e.target.style.color = '#1976d2'; }}
                     >
                       📅 Delete Month
                     </button>
                     <button
                       style={{ 
-                        padding: '6px 12px', 
-                        fontSize: '12px', 
-                        marginRight: '8px',
+                        padding: '8px 12px', 
+                        fontSize: '12px',
                         fontWeight: '600',
                         backgroundColor: '#fff3e0',
                         color: '#f57c00',
                         border: '1px solid #f57c00',
                         borderRadius: '4px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s'
+                        flex: '1 1 calc(50% - 4px)',
+                        minWidth: '120px'
                       }}
                       onClick={() => setDeletingAllMonths(user)}
-                      onMouseOver={(e) => { e.target.style.backgroundColor = '#f57c00'; e.target.style.color = '#fff'; }}
-                      onMouseOut={(e) => { e.target.style.backgroundColor = '#fff3e0'; e.target.style.color = '#f57c00'; }}
                     >
-                      📊 Delete All Months
+                      📊 Delete All
                     </button>
                     <button
                       style={{ 
-                        padding: '6px 12px', 
-                        fontSize: '12px', 
-                        marginRight: '8px',
+                        padding: '8px 12px', 
+                        fontSize: '12px',
                         fontWeight: '600',
                         backgroundColor: '#e8f5e9',
                         color: '#388e3c',
                         border: '1px solid #388e3c',
                         borderRadius: '4px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s'
+                        flex: '1 1 calc(50% - 4px)',
+                        minWidth: '120px'
                       }}
                       onClick={() => setResettingPassword(user)}
-                      onMouseOver={(e) => { e.target.style.backgroundColor = '#388e3c'; e.target.style.color = '#fff'; }}
-                      onMouseOut={(e) => { e.target.style.backgroundColor = '#e8f5e9'; e.target.style.color = '#388e3c'; }}
                     >
                       🔑 Reset Password
                     </button>
                     <button
                       style={{ 
-                        padding: '6px 12px', 
+                        padding: '8px 12px', 
                         fontSize: '12px',
                         fontWeight: '600',
                         backgroundColor: '#ffebee',
@@ -265,21 +381,39 @@ const AdminDashboard = () => {
                         border: '1px solid #d32f2f',
                         borderRadius: '4px',
                         cursor: 'pointer',
-                        transition: 'all 0.2s'
+                        flex: '1 1 calc(50% - 4px)',
+                        minWidth: '120px'
                       }}
                       onClick={() => setDeletingUser(user)}
-                      onMouseOver={(e) => { e.target.style.backgroundColor = '#d32f2f'; e.target.style.color = '#fff'; }}
-                      onMouseOut={(e) => { e.target.style.backgroundColor = '#ffebee'; e.target.style.color = '#d32f2f'; }}
                     >
                       🗑️ Delete User
                     </button>
-                  </td>
-                </tr>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          .desktop-table {
+            display: block !important;
+          }
+          .mobile-cards {
+            display: none !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .desktop-table {
+            display: none !important;
+          }
+          .mobile-cards {
+            display: block !important;
+          }
+        }
+      `}</style>
 
       {/* Delete User Confirmation Modal */}
       {deletingUser && (
