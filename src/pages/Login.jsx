@@ -80,12 +80,6 @@ const Login = () => {
         <p style={{ textAlign: 'center', marginTop: '20px' }}>
           Don't have an account? <Link to="/register">Register</Link>
         </p>
-        
-        <p style={{ textAlign: 'center', marginTop: '15px', fontSize: '14px' }}>
-          <Link to="/admin" style={{ color: '#666' }}>
-            🔐 Admin Login
-          </Link>
-        </p>
       </div>
     </div>
   );
