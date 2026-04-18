@@ -257,47 +257,142 @@ const MonthlyHistory = () => {
                 No expenses found for this month
               </p>
             ) : (
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
+              <>
+                {/* Desktop Table View */}
+                <div className="desktop-table" style={{ display: 'none' }}>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {report.expenses.map((expense) => (
+                        <tr key={expense.id}>
+                          <td>{new Date(expense.expenseDate).toLocaleDateString()}</td>
+                          <td>{expense.description || '-'}</td>
+                          <td>{formatCurrency(expense.amount)}</td>
+                          <td>
+                            <button
+                              className="btn btn-primary"
+                              style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                              onClick={() => handleEdit(expense)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="btn btn-danger"
+                              style={{ padding: '4px 8px', fontSize: '12px' }}
+                              onClick={() => handleDeleteClick(expense)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
+                        <td colSpan="2" style={{ textAlign: 'right' }}>Total:</td>
+                        <td>{formatCurrency(report.totalSpent)}</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Card View */}
+                <div className="mobile-cards">
                   {report.expenses.map((expense) => (
-                    <tr key={expense.id}>
-                      <td>{new Date(expense.expenseDate).toLocaleDateString()}</td>
-                      <td>{expense.description || '-'}</td>
-                      <td>{formatCurrency(expense.amount)}</td>
-                      <td>
+                    <div key={expense.id} style={{
+                      border: '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      marginBottom: '12px',
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ fontWeight: '600', color: '#333' }}>
+                          {new Date(expense.expenseDate).toLocaleDateString()}
+                        </span>
+                        <span style={{ fontWeight: '600', color: '#d32f2f' }}>
+                          {formatCurrency(expense.amount)}
+                        </span>
+                      </div>
+                      <div style={{ color: '#666', fontSize: '14px', marginBottom: '10px', wordBreak: 'break-word' }}>
+                        {expense.description || '-'}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
                         <button
-                          className="btn btn-primary"
-                          style={{ padding: '4px 8px', fontSize: '12px', marginRight: '5px' }}
+                          style={{ 
+                            flex: 1,
+                            padding: '6px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            backgroundColor: '#e3f2fd',
+                            color: '#1976d2',
+                            border: '1px solid #1976d2',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
                           onClick={() => handleEdit(expense)}
                         >
-                          Edit
+                          ✏️ Edit
                         </button>
                         <button
-                          className="btn btn-danger"
-                          style={{ padding: '4px 8px', fontSize: '12px' }}
+                          style={{ 
+                            flex: 1,
+                            padding: '6px 12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            backgroundColor: '#ffebee',
+                            color: '#d32f2f',
+                            border: '1px solid #d32f2f',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
                           onClick={() => handleDeleteClick(expense)}
                         >
-                          Delete
+                          🗑️ Delete
                         </button>
-                      </td>
-                    </tr>
+                      </div>
+                    </div>
                   ))}
-                  <tr style={{ fontWeight: 'bold', backgroundColor: '#f5f5f5' }}>
-                    <td colSpan="2" style={{ textAlign: 'right' }}>Total:</td>
-                    <td>{formatCurrency(report.totalSpent)}</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    padding: '12px',
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '8px',
+                    fontWeight: 'bold',
+                    marginTop: '10px'
+                  }}>
+                    <span>Total:</span>
+                    <span>{formatCurrency(report.totalSpent)}</span>
+                  </div>
+                </div>
+              </>
             )}
+            
+            <style>{`
+              @media (min-width: 768px) {
+                .desktop-table {
+                  display: block !important;
+                }
+                .mobile-cards {
+                  display: none !important;
+                }
+              }
+              @media (max-width: 767px) {
+                .desktop-table {
+                  display: none !important;
+                }
+                .mobile-cards {
+                  display: block !important;
+                }
+              }
+            `}</style>
           </div>
         </>
       ) : null}

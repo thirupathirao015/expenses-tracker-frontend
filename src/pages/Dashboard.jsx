@@ -255,7 +255,18 @@ const Dashboard = () => {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: '1fr',
+        gap: '20px'
+      }} className="dashboard-grid">
+        <style>{`
+          @media (min-width: 768px) {
+            .dashboard-grid {
+              grid-template-columns: 1fr 1fr !important;
+            }
+          }
+        `}</style>
         {/* Add/Edit Expense Form */}
         <div className="card">
           <h2 style={{ marginBottom: '20px' }}>{editingExpense ? 'Edit Expense' : 'Add Expense'}</h2>
