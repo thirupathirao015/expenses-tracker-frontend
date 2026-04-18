@@ -28,7 +28,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
       }}>
         <h3 style={{ marginBottom: '15px', color: '#1976d2' }}>🔐 Forgot Password?</h3>
         <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.5' }}>
-          Please contact the <strong>Admin</strong> to reset your password.
+          Please reach out to <strong>Thirupathi</strong> to reset your password.
         </p>
         <p style={{ 
           backgroundColor: '#e3f2fd', 
@@ -38,7 +38,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
           fontSize: '14px',
           color: '#333'
         }}>
-          📧 Contact: <strong>thiru.devprofile@gmail.com</strong>
+          📞 Contact admin for password reset assistance
         </p>
         <button
           className="btn btn-primary"
