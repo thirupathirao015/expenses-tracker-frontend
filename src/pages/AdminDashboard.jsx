@@ -15,6 +15,13 @@ const AdminDashboard = () => {
   const [deletingUser, setDeletingUser] = useState(null);
   const [deletingMonth, setDeletingMonth] = useState(null);
   const [deletingAllMonths, setDeletingAllMonths] = useState(null);
+  
+  // Reset password modal states
+  const [resettingPassword, setResettingPassword] = useState(null);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [resetting, setResetting] = useState(false);
+  
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [deleting, setDeleting] = useState(false);
@@ -115,6 +122,33 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!resettingPassword) return;
+    
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setResetting(true);
+    try {
+      await adminService.resetUserPassword(adminKey, resettingPassword.email, newPassword);
+      setSuccess(`Password for ${resettingPassword.email} reset successfully`);
+      setResettingPassword(null);
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err) {
+      setError('Failed to reset password');
+    } finally {
+      setResetting(false);
+    }
+  };
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -201,6 +235,25 @@ const AdminDashboard = () => {
                       onMouseOut={(e) => { e.target.style.backgroundColor = '#fff3e0'; e.target.style.color = '#f57c00'; }}
                     >
                       📊 Delete All Months
+                    </button>
+                    <button
+                      style={{ 
+                        padding: '6px 12px', 
+                        fontSize: '12px', 
+                        marginRight: '8px',
+                        fontWeight: '600',
+                        backgroundColor: '#e8f5e9',
+                        color: '#388e3c',
+                        border: '1px solid #388e3c',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onClick={() => setResettingPassword(user)}
+                      onMouseOver={(e) => { e.target.style.backgroundColor = '#388e3c'; e.target.style.color = '#fff'; }}
+                      onMouseOut={(e) => { e.target.style.backgroundColor = '#e8f5e9'; e.target.style.color = '#388e3c'; }}
+                    >
+                      🔑 Reset Password
                     </button>
                     <button
                       style={{ 
@@ -361,6 +414,88 @@ const AdminDashboard = () => {
                 style={{ flex: 1 }}
                 onClick={() => setDeletingAllMonths(null)}
                 disabled={deleting}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {resettingPassword && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+          justifyContent: 'center', alignItems: 'center', zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'white', padding: '30px', borderRadius: '8px',
+            width: '90%', maxWidth: '400px',
+          }}>
+            <h3 style={{ color: '#388e3c', marginBottom: '15px', textAlign: 'center' }}>🔑 Reset Password</h3>
+            <p style={{ marginBottom: '20px', textAlign: 'center' }}>
+              Reset password for <strong>{resettingPassword.name}</strong> ({resettingPassword.email})
+            </p>
+            
+            <div className="form-group">
+              <label>New Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Enter new password"
+                minLength={6}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                className="form-control"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                minLength={6}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button
+                style={{ 
+                  flex: 1,
+                  padding: '10px',
+                  fontWeight: '600',
+                  backgroundColor: '#388e3c',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+                onClick={handleResetPassword}
+                disabled={resetting}
+              >
+                {resetting ? 'Resetting...' : 'Reset Password'}
+              </button>
+              <button
+                style={{ 
+                  flex: 1,
+                  padding: '10px',
+                  fontWeight: '600',
+                  backgroundColor: '#6c757d',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setResettingPassword(null);
+                  setNewPassword('');
+                  setConfirmPassword('');
+                }}
+                disabled={resetting}
               >
                 Cancel
               </button>

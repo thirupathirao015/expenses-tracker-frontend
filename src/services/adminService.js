@@ -36,4 +36,11 @@ export const adminService = {
     const response = await axios.delete(`${API_URL}/admin/users/${userId}?adminKey=${adminKey}`);
     return response.data;
   },
+
+  resetUserPassword: async (adminKey, userEmail, newPassword) => {
+    const response = await axios.post(
+      `${API_URL}/auth/admin/reset-password?adminKey=${adminKey}&userEmail=${encodeURIComponent(userEmail)}&newPassword=${encodeURIComponent(newPassword)}`
+    );
+    return response.data;
+  },
 };
