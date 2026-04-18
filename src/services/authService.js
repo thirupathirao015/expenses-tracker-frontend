@@ -26,6 +26,8 @@ export const authService = {
         localStorage.setItem('tempEmail', error.response.data.email);
         return { mustChangePassword: true, ...error.response.data };
       }
+      // Log error for debugging
+      console.error('Login error:', error.message, error.response?.data);
       throw error;
     }
   },
