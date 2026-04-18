@@ -24,7 +24,12 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await authService.login(formData);
+      const result = await authService.login(formData);
+      // Check if user must change password
+      if (result.mustChangePassword) {
+        navigate('/change-password');
+        return;
+      }
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data || 'Login failed. Please try again.');

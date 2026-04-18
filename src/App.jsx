@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import MonthlyHistory from './pages/MonthlyHistory';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import ChangePassword from './pages/ChangePassword';
 import { authService } from './services/authService';
 
 const Home = () => {
@@ -40,6 +41,7 @@ function App() {
         />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </Router>
   );
