@@ -100,17 +100,17 @@ const Register = () => {
                   background: 'none',
                   border: 'none',
                   cursor: 'pointer',
-                  fontSize: '18px',
+                  fontSize: '12px',
                   padding: '0',
-                  width: '30px',
-                  height: '30px',
+                  width: '40px',
+                  height: '28px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
                 tabIndex={-1}
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
           </div>
