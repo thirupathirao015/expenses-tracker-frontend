@@ -84,7 +84,9 @@ const Login = () => {
       }
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data || 'Login failed. Please try again.');
+      console.error('Login error details:', err);
+      const errorMsg = err.response?.data?.message || err.response?.data || err.message || 'Login failed. Please try again.';
+      setError(typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg));
     } finally {
       setLoading(false);
     }
