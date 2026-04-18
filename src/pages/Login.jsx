@@ -2,6 +2,56 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 
+const ForgotPasswordModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+  
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    }}>
+      <div style={{
+        background: 'white',
+        padding: '30px',
+        borderRadius: '8px',
+        width: '90%',
+        maxWidth: '400px',
+        textAlign: 'center',
+      }}>
+        <h3 style={{ marginBottom: '15px', color: '#1976d2' }}>🔐 Forgot Password?</h3>
+        <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.5' }}>
+          Please contact the <strong>Admin</strong> to reset your password.
+        </p>
+        <p style={{ 
+          backgroundColor: '#e3f2fd', 
+          padding: '12px', 
+          borderRadius: '4px',
+          marginBottom: '20px',
+          fontSize: '14px',
+          color: '#333'
+        }}>
+          📧 Contact: <strong>thiru.devprofile@gmail.com</strong>
+        </p>
+        <button
+          className="btn btn-primary"
+          style={{ width: '100%' }}
+          onClick={onClose}
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -10,6 +60,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -82,9 +133,31 @@ const Login = () => {
           </button>
         </form>
         
-        <p style={{ textAlign: 'center', marginTop: '20px' }}>
+        <p style={{ textAlign: 'center', marginTop: '15px' }}>
+          <button
+            type="button"
+            onClick={() => setShowForgotModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#1976d2',
+              cursor: 'pointer',
+              fontSize: '14px',
+              textDecoration: 'underline'
+            }}
+          >
+            Forgot Password?
+          </button>
+        </p>
+        
+        <p style={{ textAlign: 'center', marginTop: '10px' }}>
           Don't have an account? <Link to="/register">Register</Link>
         </p>
+        
+        <ForgotPasswordModal 
+          isOpen={showForgotModal} 
+          onClose={() => setShowForgotModal(false)} 
+        />
       </div>
     </div>
   );
