@@ -5,6 +5,7 @@ import { adminService } from '../services/adminService';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const [adminKey, setAdminKey] = useState('');
+  const [showAdminKey, setShowAdminKey] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,15 +42,41 @@ const AdminLogin = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="adminKey">Admin Key</label>
-            <input
-              type="password"
-              id="adminKey"
-              className="form-control"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              placeholder="Enter admin secret key"
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showAdminKey ? 'text' : 'password'}
+                id="adminKey"
+                className="form-control"
+                value={adminKey}
+                onChange={(e) => setAdminKey(e.target.value)}
+                placeholder="Enter admin secret key"
+                required
+                style={{ paddingRight: '40px' }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowAdminKey(!showAdminKey)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '12px',
+                  padding: '0',
+                  width: '40px',
+                  height: '28px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                tabIndex={-1}
+              >
+                {showAdminKey ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
 
           <button
