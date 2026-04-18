@@ -538,7 +538,6 @@ const MonthlyHistory = () => {
               marginBottom: '20px',
               textAlign: 'left',
             }}>
-              <p><strong>Category:</strong> {deletingExpense.category.replace(/_/g, ' ')}</p>
               <p><strong>Description:</strong> {deletingExpense.description || '-'}</p>
               <p><strong>Amount:</strong> {formatCurrency(deletingExpense.amount)}</p>
               <p><strong>Date:</strong> {new Date(deletingExpense.expenseDate).toLocaleDateString()}</p>
